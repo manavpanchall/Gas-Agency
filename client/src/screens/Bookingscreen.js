@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Loader from "../components/Loader";
-import Error from "../components/Error";
-import Swal from "sweetalert2";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Loader from '../components/Loader';
+import Error from '../components/Error';
+import Swal from 'sweetalert2';
 
 function Bookingscreen() {
   const { cylinderid } = useParams();
@@ -11,35 +11,32 @@ function Bookingscreen() {
   const [error, setError] = useState(false);
   const [cylinder, setCylinder] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUser) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
-  
+
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.post("/api/cylinders/getcylinderbyid", {
+        const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/cylinders/getcylinderbyid`, { // Use environment variable
           cylinderid: cylinderid,
         });
-        console.log("Cylinder data:", data); // Log the cylinder data
         setCylinder(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching cylinder:", error.response ? error.response.data : error.message);
+        console.error('Error fetching cylinder:', error.response ? error.response.data : error.message);
         setError(true);
         setLoading(false);
-      } finally {
-        setLoading(false); // Ensure loading is set to false in all cases
       }
     };
-  
+
     fetchData();
-  }, [cylinderid]); // Only depend on `cylinderid`
+  }, [cylinderid, currentUser, navigate]);
 
   const handleIncrement = () => {
     setQuantity(quantity + 1);
@@ -53,7 +50,7 @@ function Bookingscreen() {
 
   const bookCylinder = async (paymentId) => {
     if (!cylinder) {
-      alert("Cylinder data is not available");
+      alert('Cylinder data is not available');
       return;
     }
 
@@ -69,36 +66,32 @@ function Bookingscreen() {
     };
 
     try {
-      const result = await axios.post("/api/bookings/bookcylinder", bookingDetails);
+      const result = await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings/bookcylinder`, bookingDetails); // Use environment variable
       Swal.fire({
-        icon: "success",
-        title: "Congratulations!",
-        text: "Your payment was successful and the booking is confirmed.",
+        icon: 'success',
+        title: 'Congratulations!',
+        text: 'Your payment was successful and the booking is confirmed.',
       });
     } catch (error) {
-      console.error("Error booking cylinder:", error.response ? error.response.data : error.message);
-      alert("Booking Failed: " + (error.response ? error.response.data.message : error.message));
+      console.error('Error booking cylinder:', error.response ? error.response.data : error.message);
+      alert('Booking Failed: ' + (error.response ? error.response.data.message : error.message));
     }
   };
 
   const handlePayment = async () => {
-    console.log("Pay Now button clicked"); // Log button click
     const totalAmount = quantity * cylinder.price;
-  
+
     try {
-      console.log("Creating Razorpay order..."); // Log order creation
-      const order = await axios.post("/api/payment/create-order", { amount: totalAmount });
-      console.log("Razorpay order created:", order.data); // Log order data
-  
+      const order = await axios.post(`${process.env.REACT_APP_API_URL}/api/payment/create-order`, { amount: totalAmount }); // Use environment variable
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Use environment variable
         amount: order.data.amount,
         currency: order.data.currency,
-        name: "Gas Agency System",
-        description: "Cylinder Booking",
+        name: 'Gas Agency System',
+        description: 'Cylinder Booking',
         order_id: order.data.id,
         handler: function (response) {
-          console.log("Razorpay payment response:", response); // Log payment response
+          console.log(response);
           bookCylinder(response.razorpay_payment_id);
         },
         prefill: {
@@ -107,16 +100,15 @@ function Bookingscreen() {
           contact: currentUser.phone,
         },
         theme: {
-          color: "#3399cc",
+          color: '#3399cc',
         },
       };
-  
-      console.log("Initializing Razorpay..."); // Log Razorpay initialization
+
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      console.error("Error creating Razorpay order:", error.response ? error.response.data : error.message);
-      alert("Payment Failed: " + (error.response ? error.response.data.message : error.message));
+      console.error('Error creating Razorpay order:', error.response ? error.response.data : error.message);
+      alert('Payment Failed: ' + (error.response ? error.response.data.message : error.message));
     }
   };
 
@@ -143,7 +135,7 @@ function Bookingscreen() {
         </div>
 
         <div className="col-md-5">
-          <div style={{ textAlign: "right" }}>
+          <div style={{ textAlign: 'right' }}>
             <h1>Booking Details</h1>
             <hr />
             <b>
@@ -154,12 +146,12 @@ function Bookingscreen() {
             </b>
           </div>
 
-          <div style={{ textAlign: "right" }}>
+          <div style={{ textAlign: 'right' }}>
             <b>
               <h1>Payment Details</h1>
               <hr />
               <p>Total Cylinder:</p>
-              <div className="input-group mb-3" style={{ maxWidth: "200px", margin: "0 auto" }}>
+              <div className="input-group mb-3" style={{ maxWidth: '200px', margin: '0 auto' }}>
                 <button className="btn btn-outline-secondary" type="button" onClick={handleDecrement}>
                   -
                 </button>
@@ -172,7 +164,7 @@ function Bookingscreen() {
             </b>
           </div>
 
-          <div style={{ float: "right" }}>
+          <div style={{ float: 'right' }}>
             <button className="btn btn-primary" onClick={handlePayment}>
               Pay Now
             </button>
