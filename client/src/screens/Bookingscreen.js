@@ -23,7 +23,7 @@ function Bookingscreen() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/cylinders/getcylinderbyid`, { // Use environment variable
+        const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/cylinders/getcylinderbyid`, {
           cylinderid: cylinderid,
         });
         setCylinder(data);
@@ -37,6 +37,7 @@ function Bookingscreen() {
 
     fetchData();
   }, [cylinderid, currentUser, navigate]);
+
 
   const handleIncrement = () => {
     setQuantity(quantity + 1);

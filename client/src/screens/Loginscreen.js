@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../components/Loader';
 import Error from '../components/Error';
@@ -16,14 +16,15 @@ function Login() {
 
     try {
       setLoading(true);
-      const result = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/login`, user); // Use environment variable
+      const result = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/login`, user);
       setLoading(false);
 
       if (result.data.isAdmin) {
         localStorage.setItem('currentUser', JSON.stringify(result.data));
         navigate('/admin/dashboard');
       } else {
-        setError(true);
+        localStorage.setItem('currentUser', JSON.stringify(result.data));
+        navigate('/home'); // Redirect to home page after login
       }
     } catch (error) {
       setLoading(false);

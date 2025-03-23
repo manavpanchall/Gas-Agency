@@ -10,41 +10,31 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-  origin: ['https://gas-agency-frontend.vercel.app', 'http://localhost:3000'], // Allow requests from these origins
-  credentials: true, // Allow credentials (e.g., cookies)
+  origin: ['https://gas-agency-frontend.vercel.app', 'http://localhost:3000'],
+  credentials: true,
 }));
 
 // Middleware
-app.use(express.json()); // Parse JSON request bodies
+app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  autoIndex: true, // Enable automatic index creation
-});
-
-const connection = mongoose.connection;
-connection.on('error', (error) => {
-  console.error('MongoDB connection failed:', error);
-});
-connection.once('open', () => {
-  console.log('MongoDB connection successful');
-});
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('MongoDB connection successful'))
+  .catch(err => console.error('MongoDB connection failed:', err));
 
 // Routes
-app.use('/api/users', usersRoute); // User-related routes
-app.use('/api/bookings', bookingsRoute); // Booking-related routes
-app.use('/api/cylinders', cylindersRoute); // Cylinder-related routes
-app.use('/api/payment', paymentRoute); // Payment-related routes
+app.use('/api/users', usersRoute);
+app.use('/api/bookings', bookingsRoute);
+app.use('/api/cylinders', cylindersRoute);
+app.use('/api/payment', paymentRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the error stack trace
+  console.error(err.stack);
   res.status(500).json({
     success: false,
     message: err.message || 'Something went wrong',
-    error: process.env.NODE_ENV === 'development' ? err : {}, // Show full error in development
+    error: process.env.NODE_ENV === 'development' ? err : {},
   });
 });
 
