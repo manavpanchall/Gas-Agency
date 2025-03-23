@@ -1,0 +1,226 @@
+/* General Styles */
+.App {
+  text-align: left;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: royalblue !important;
+  padding: 10px 20px;
+}
+
+.navbar-brand {
+  color: white !important;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  color: white !important;
+  font-size: 1rem;
+}
+
+/* Login Page Styles */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.login-box {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.login-box input {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: royalblue;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.login-box button:hover {
+  background-color: #1e4db6;
+}
+
+/* Home Page Styles */
+.homescreen {
+  padding: 20px;
+}
+
+.homescreen h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* Cylinder Card Styles */
+.cylinder-card {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  text-align: center; /* Added: Center-align text */
+}
+
+.cylinder-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px; /* Added: Space below image */
+}
+
+.cylinder-card h3 {
+  font-size: 1.5rem;
+  margin: 10px 0; /* Modified: Better spacing */
+  color: #333; /* Added: Consistent text color */
+}
+
+.cylinder-card p {
+  font-size: 1rem;
+  margin-bottom: 15px; /* Modified: Better spacing */
+  color: #666; /* Added: Consistent text color */
+}
+
+.cylinder-card button {
+  background-color: royalblue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%; /* Added: Full-width button */
+  max-width: 200px; /* Added: Limit button width */
+}
+
+.cylinder-card button:hover {
+  background-color: #1e4db6;
+}
+
+/* Booking Page Styles */
+.bookingscreen {
+  padding: 20px;
+}
+
+.bookingscreen h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.booking-details {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto; /* Added: Center-align booking details */
+}
+
+.booking-details p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #666; /* Added: Consistent text color */
+}
+
+.booking-details button {
+  background-color: royalblue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%; /* Added: Full-width button */
+  max-width: 200px; /* Added: Limit button width */
+}
+
+.booking-details button:hover {
+  background-color: #1e4db6;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .login-box {
+    padding: 15px;
+  }
+
+  .login-box h2 {
+    font-size: 1.2rem;
+  }
+
+  .homescreen h2 {
+    font-size: 1.8rem;
+  }
+
+  .cylinder-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .cylinder-card p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.8rem;
+  }
+
+  .login-box {
+    padding: 10px;
+  }
+
+  .login-box h2 {
+    font-size: 1rem;
+  }
+
+  .homescreen h2 {
+    font-size: 1.5rem;
+  }
+
+  .cylinder-card h3 {
+    font-size: 1rem;
+  }
+
+  .cylinder-card p {
+    font-size: 0.8rem;
+  }
+}
