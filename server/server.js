@@ -3,10 +3,10 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bookingsRoute = require('./server/routes/bookingsRoute');
-const cylindersRoute = require('./server/routes/cylindersRoute');
-const paymentRoute = require('./server/routes/paymentRoute');
-const usersRoute = require('./server/routes/usersRoute');
+const usersRoute = require('./routes/usersRoute'); // Correct path
+const bookingsRoute = require('./routes/bookingsRoute'); // Correct path
+const cylindersRoute = require('./routes/cylindersRoute'); // Correct path
+const paymentRoute = require('./routes/paymentRoute'); // Correct path
 
 const app = express();
 
@@ -48,5 +48,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Export the app for Vercel Serverless Functions
-module.exports = app;
+// Start server
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
