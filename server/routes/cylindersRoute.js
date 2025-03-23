@@ -7,7 +7,7 @@ router.get('/getallcylinders', async (req, res) => {
     try {
         const cylinders = await Cylinder.find({});
         if (!cylinders || cylinders.length === 0) {
-            return res.status(404).json({ message: 'No cylinders found' });
+            return res.status(404).json({ message: 'No cylinders found', cylinders: [] }); // Return an empty array
         }
 
         // Add quantity field dynamically
@@ -16,12 +16,13 @@ router.get('/getallcylinders', async (req, res) => {
             quantity: cylinder.totalcylinder // Map `totalcylinder` as `quantity`
         }));
 
-        res.json(modifiedCylinders);
+        res.json(modifiedCylinders); // Return the array of cylinders
     } catch (error) {
         console.error('Error fetching cylinders:', error);
         res.status(500).json({
             message: 'Failed to fetch cylinders',
-            error: error.message
+            error: error.message,
+            cylinders: [] // Return an empty array in case of error
         });
     }
 });

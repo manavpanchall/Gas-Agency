@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Cylinder from '../components/Cylinder';
-import Loader from '../components/Loader';
-import Error from '../components/Error';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Cylinder from "../components/Cylinder";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 function Homescreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [cylinders, setCylinders] = useState([]);
+  const [cylinders, setCylinders] = useState([]); // Initialize as an empty array
   const [originalCylinders, setOriginalCylinders] = useState([]);
   const [searchkey, setSearchkey] = useState('');
   const [type, setType] = useState('all');
@@ -16,11 +16,20 @@ function Homescreen() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get('/api/cylinders/getallcylinders', {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/cylinders/getallcylinders`, {
           validateStatus: (status) => status < 500,
         });
-        setCylinders(data);
-        setOriginalCylinders(data);
+        console.log("API Response:", data); // Log the API response
+
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setCylinders(data);
+          setOriginalCylinders(data);
+        } else {
+          setCylinders([]); // Set to empty array if data is not an array
+          setOriginalCylinders([]);
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching cylinders:', error.response ? error.response.data : error.message);
@@ -78,12 +87,16 @@ function Homescreen() {
       <div className="row justify-content-center mt-5">
         {loading ? (
           <Loader />
-        ) : (
+        ) : error ? (
+          <Error message="Failed to fetch cylinders" />
+        ) : Array.isArray(cylinders) && cylinders.length > 0 ? (
           cylinders.map((cylinder) => (
             <div className="col-md-9 mt-3" key={cylinder._id}>
               <Cylinder cylinder={cylinder} />
             </div>
           ))
+        ) : (
+          <p>No cylinders found.</p>
         )}
       </div>
     </div>
