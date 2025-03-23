@@ -27,17 +27,18 @@ router.get('/getallcylinders', async (req, res) => {
     }
 });
 
-// Get cylinder by ID
 router.post('/getcylinderbyid', async (req, res) => {
     const { cylinderid } = req.body;
-
+    console.time('getcylinderbyid'); // Start timer
     try {
         const cylinder = await Cylinder.findById(cylinderid);
+        console.timeEnd('getcylinderbyid'); // End timer
         if (!cylinder) {
             return res.status(404).json({ message: 'Cylinder not found' });
         }
         res.send(cylinder);
     } catch (error) {
+        console.timeEnd('getcylinderbyid'); // End timer
         console.error('Error fetching cylinder:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
