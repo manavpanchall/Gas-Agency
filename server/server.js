@@ -3,10 +3,10 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const usersRoute = require('./routes/usersRoute'); // Correct path
-const bookingsRoute = require('./routes/bookingsRoute'); // Correct path
-const cylindersRoute = require('./routes/cylindersRoute'); // Correct path
-const paymentRoute = require('./routes/paymentRoute'); // Correct path
+const usersRoute = require('./routes/usersRoute');
+const bookingsRoute = require('./routes/bookingsRoute');
+const cylindersRoute = require('./routes/cylindersRoute');
+const paymentRoute = require('./routes/paymentRoute');
 
 const app = express();
 
@@ -18,19 +18,9 @@ app.use(cors({
 app.use(express.json()); // Parse JSON request bodies
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    autoIndex: true // Enable automatic index creation
-});
-
-const connection = mongoose.connection;
-connection.on('error', (error) => {
-    console.error('MongoDB connection failed:', error);
-});
-connection.once('open', () => {
-    console.log('MongoDB connection successful');
-});
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('MongoDB connection successful'))
+    .catch((error) => console.error('MongoDB connection failed:', error));
 
 // Routes
 app.use('/api/users', usersRoute); // User-related routes
