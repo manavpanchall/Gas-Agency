@@ -16,8 +16,10 @@ function Bookingscreen() {
 
     // Fetch cylinder data
     useEffect(() => {
+        let isMounted = true; // Track if the component is mounted
+
         if (!currentUser) {
-            navigate('/login'); // Redirect to login if user is not logged in
+            navigate('/login');
             return;
         }
 
@@ -27,17 +29,25 @@ function Bookingscreen() {
                 const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/cylinders/getcylinderbyid`, {
                     cylinderid: cylinderid,
                 });
-                setCylinder(data); // Set cylinder data
-                setLoading(false);
+                if (isMounted) {
+                    setCylinder(data);
+                    setLoading(false);
+                }
             } catch (error) {
-                console.error('Error fetching cylinder:', error.response ? error.response.data : error.message);
-                setError(true); // Set error state
-                setLoading(false);
+                if (isMounted) {
+                    console.error('Error fetching cylinder:', error.response ? error.response.data : error.message);
+                    setError(true);
+                    setLoading(false);
+                }
             }
         };
 
         fetchData();
-    }, [cylinderid, currentUser, navigate]); // Dependencies: cylinderid, currentUser, navigate
+
+        return () => {
+            isMounted = false; // Cleanup function to prevent state updates after unmount
+        };
+    }, [cylinderid, currentUser, navigate]);
 
     // Handle payment
     const handlePayment = async () => {
@@ -157,7 +167,14 @@ function Bookingscreen() {
                                 <button className="btn btn-outline-secondary" type="button" onClick={handleDecrement}>
                                     -
                                 </button>
-                                <input type="text" className="form-control text-center" value={quantity} readOnly />
+                                <input
+                                    type="text"
+                                    className="form-control text-center"
+                                    value={quantity}
+                                    readOnly
+                                    id="quantity"
+                                    name="quantity"
+                                />
                                 <button className="btn btn-outline-secondary" type="button" onClick={handleIncrement}>
                                     +
                                 </button>
