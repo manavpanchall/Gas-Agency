@@ -1,3 +1,5 @@
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -21,6 +23,10 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connection successful'))
   .catch(err => console.error('MongoDB connection failed:', err));
+
+// Log environment variables for debugging
+console.log('Razorpay Key ID:', process.env.RAZORPAY_KEY_ID);
+console.log('Razorpay Key Secret:', process.env.RAZORPAY_KEY_SECRET);
 
 // Routes
 app.use('/api/users', usersRoute);

@@ -2,6 +2,24 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/booking');
 
+
+// Cancel a booking
+router.post('/cancelbooking', async (req, res) => {
+    const { bookingId } = req.body;
+
+    try {
+        const booking = await Booking.findByIdAndUpdate(bookingId, { status: 'cancelled' }, { new: true });
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+        res.json({ success: true, message: 'Booking cancelled successfully' });
+    } catch (error) {
+        console.error('Error cancelling booking:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+
 // Route to book a cylinder
 router.post('/bookcylinder', async (req, res) => {
     const { cylinder, userid, totalAmount, totalcylinder, weight, bodyweight, transactionId } = req.body;

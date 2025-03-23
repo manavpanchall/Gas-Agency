@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Loader from "../components/Loader";
-import Error from "../components/Error";
-import Success from '../components/Success';
+import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
+import Error from '../components/Error';
+import Swal from 'sweetalert2';
 
 function Registerscreen() {
   const [name, setName] = useState('');
@@ -10,37 +11,39 @@ function Registerscreen() {
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmpassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState();
-  const [success, setSuccess] = useState();
+  const [error, setError] = useState(false);
+  const navigate = useNavigate();
 
   async function register() {
-    if (password === confirmpassword) {
-      const user = {
-        name,
-        email,
-        password,
-        confirmpassword,
-      };
+    if (password !== confirmpassword) {
+      Swal.fire('Error', 'Passwords do not match', 'error');
+      return;
+    }
 
-      try {
-        setLoading(true);
-        const result = await axios.post('/api/users/register', user); // API call to backend
-        console.log(result.data);
-        setLoading(false);
-        setSuccess(true);
+    const user = { name, email, password };
 
-        // Clear form fields
-        setName('');
-        setEmail('');
-        setPassword('');
-        setConfirmpassword('');
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-        setError(true);
-      }
-    } else {
-      alert('Passwords do not match');
+    try {
+      setLoading(true);
+      const result = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/register`, user);
+      setLoading(false);
+
+      // Automatically log in the user after registration
+      const loginResult = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/login`, { email, password });
+      localStorage.setItem('currentUser', JSON.stringify(loginResult.data)); // Save user data to localStorage
+
+      // Show success popup
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: 'You have been logged in automatically.',
+      }).then(() => {
+        navigate('/home'); // Redirect to home page
+      });
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      setError(true);
+      Swal.fire('Error', 'Registration Failed', 'error');
     }
   }
 
@@ -48,7 +51,6 @@ function Registerscreen() {
     <div>
       {loading && <Loader />}
       {error && <Error />}
-      {success && <Success message='User Registered Successfully' />}
       <div className='row justify-content-center mt-5'>
         <div className='col-md-5 mt-5'>
           <div className='bs'>
