@@ -51,13 +51,17 @@ export function MyBookings({ user }) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        let isMounted = true;
+
         async function fetchBookings() {
             try {
-                const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings/getbookingsbyuserid`, { userid: user._id });
-                setBookings(response.data);
+                const response = await axios.post('/api/bookings/getbookingsbyuserid', { userid: user._id });
+                if (isMounted) {
+                    setBookings(response.data);
+                }
             } catch (error) {
-                console.error('Error fetching bookings:', error.response ? error.response.data : error.message);
-                setError(error);
+                console.error('Error fetching bookings:', error);
+                if (isMounted) setError(error);
             } finally {
                 setLoading(false);
             }
@@ -66,12 +70,16 @@ export function MyBookings({ user }) {
         if (user && user._id) {
             fetchBookings();
         }
+
+        return () => {
+            isMounted = false;
+        };
     }, [user]);
 
     const cancelBooking = async (bookingId) => {
         try {
             setLoading(true);
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings/cancelbooking`, { bookingId });
+            const response = await axios.post('/api/bookings/cancelbooking', { bookingId });
 
             if (response.data.success) {
                 setBookings((prevBookings) =>
@@ -79,13 +87,14 @@ export function MyBookings({ user }) {
                         booking._id === bookingId ? { ...booking, status: 'cancelled' } : booking
                     )
                 );
-                Swal.fire('Success', 'Booking cancelled successfully', 'success');
+                Swal.fire('Success', 'Booking Cancelled Successfully', 'success');
             } else {
+                console.error('Failed to cancel booking:', response.data.message);
                 Swal.fire('Error', response.data.message, 'error');
             }
         } catch (error) {
-            console.error('Error cancelling booking:', error.response ? error.response.data : error.message);
-            Swal.fire('Error', 'Failed to cancel booking', 'error');
+            console.error('Error in cancelling booking:', error);
+            Swal.fire('Oops', 'Something went wrong', 'error');
         } finally {
             setLoading(false);
         }

@@ -20,28 +20,44 @@ router.post("/register", async (req, res) => {
 });
 
 
+// Login route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find the user by email and password
-        const user = await User.findOne({ email: email, password: password });
+        const user = await User.findOne({ email });
 
-        if (user) {
-            const temp = {
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        // Simple password comparison (in production, use bcrypt)
+        if (user.password !== password) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        res.json({
+            success: true,
+            user: {
                 name: user.name,
                 email: user.email,
-                isAdmin: user.isAdmin, // Ensure this field is returned
-                _id: user._id,
-            };
+                isAdmin: user.isAdmin,
+                _id: user._id
+            }
+        });
 
-            res.send(temp); // Send user data to the frontend
-        } else {
-            return res.status(400).json({ message: 'Login Failed' });
-        }
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'An error occurred while processing your request' });
+        console.error('Login error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 

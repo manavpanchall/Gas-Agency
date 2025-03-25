@@ -2,24 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/booking');
 
-
-// Cancel a booking
-router.post('/cancelbooking', async (req, res) => {
-    const { bookingId } = req.body;
-
-    try {
-        const booking = await Booking.findByIdAndUpdate(bookingId, { status: 'cancelled' }, { new: true });
-        if (!booking) {
-            return res.status(404).json({ message: 'Booking not found' });
-        }
-        res.json({ success: true, message: 'Booking cancelled successfully' });
-    } catch (error) {
-        console.error('Error cancelling booking:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
-
 // Route to book a cylinder
 router.post('/bookcylinder', async (req, res) => {
     const { cylinder, userid, totalAmount, totalcylinder, weight, bodyweight, transactionId } = req.body;
@@ -61,11 +43,35 @@ router.post('/getbookingsbyuserid', async (req, res) => {
     const { userid } = req.body;
 
     try {
-        const bookings = await Booking.find({ userid: userid });
-        res.send(bookings);
+        const bookings = await Booking.find({ userid })
+            .populate('cylinderid', 'name price weight imageurls')
+            .sort({ createdAt: -1 });
+
+        if (!bookings || bookings.length === 0) {
+            return res.status(200).json([]); // Return empty array instead of 404
+        }
+
+        const formattedBookings = bookings.map(booking => ({
+            _id: booking._id,
+            cylinder: booking.cylinderid?.name || 'Deleted Cylinder',
+            price: booking.cylinderid?.price || 0,
+            weight: booking.cylinderid?.weight || 'N/A',
+            imageurl: booking.cylinderid?.imageurls?.[0] || '',
+            totalAmount: booking.totalAmount,
+            totalcylinder: booking.totalcylinder,
+            status: booking.status,
+            createdAt: booking.createdAt,
+            transactionId: booking.transactionId
+        }));
+
+        res.json(formattedBookings);
     } catch (error) {
-        console.error('Error fetching bookings:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Bookings fetch error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error',
+            error: error.message 
+        });
     }
 });
 

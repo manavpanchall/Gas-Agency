@@ -7,14 +7,23 @@ function Navbar() {
 
     function logout() {
         localStorage.removeItem('currentUser');
-        window.location.href = '/admin/login'; // Force a full page reload
+        navigate('/admin/login');
     }
 
     function handleAdminPanelClick() {
         if (!user) {
-            navigate('/admin/login'); // Redirect to login if not authenticated
+            navigate('/admin/login');
         } else {
-            navigate('/admin/dashboard'); // Redirect to dashboard if authenticated
+            navigate('/admin/dashboard');
+        }
+    }
+
+    function handleProfileClick() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && currentUser.isAdmin) {
+            navigate('/admin/profile');
+        } else {
+            navigate('/admin/login');
         }
     }
 
@@ -51,9 +60,9 @@ function Navbar() {
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li>
-                                        <a className="dropdown-item" href="/admin/profile">
+                                        <button className="dropdown-item" onClick={handleProfileClick}>
                                             Profile
-                                        </a>
+                                        </button>
                                     </li>
                                     <li>
                                         <button className="dropdown-item" onClick={logout}>
